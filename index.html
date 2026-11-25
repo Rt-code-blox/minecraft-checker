@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Minecraft Website Checker</title>
+<style>
+body {
+  background:#101820;
+  color:white;
+  font-family:Arial,sans-serif;
+  padding:20px;
+  max-width:850px;
+  margin:auto;
+}
+h1 {color:#62d889}
+p {color:#cbd5e1}
+.card {
+  background:#202d3a;
+  padding:15px;
+  border-radius:12px;
+  margin:12px 0;
+}
+button,a {
+  padding:9px 12px;
+  margin:4px;
+  border:0;
+  border-radius:7px;
+  cursor:pointer;
+  text-decoration:none;
+  font-weight:bold;
+}
+.open {background:#3988e8;color:white}
+.yes {background:#238b54;color:white}
+.no {background:#b83e48;color:white}
+input {
+  padding:12px;
+  border-radius:7px;
+  border:0;
+  width:65%;
+  max-width:350px;
+}
+.status {color:#facc15;font-weight:bold}
+</style>
+</head>
+<body>
+
+<h1>⛏ Minecraft Website Checker</h1>
+<p>Check which Minecraft websites you can access on your Chromebook!</p>
+
+<div class="card">
+<h3>Add a website</h3>
+<input id="siteName" placeholder="Website name">
+<br><br>
+<input id="siteURL" placeholder="https://example.com">
+<br><br>
+<button class="open" onclick="addSite()">+ Add website</button>
+</div>
+
+<h3>Website list</h3>
+<p>Click OPEN to test a website. Then return here and mark the result.</p>
+
+<div id="sites"></div>
+
+<script>
+let sites = [
+ {name:"Minecraft Classic",url:"https://classic.minecraft.net/"},
+ {name:"Minecraft Official",url:"https://www.minecraft.net/"},
+ {name:"Eaglercraft (search)",url:"https://www.google.com/search?q=Eaglercraft+1.8.8"},
+ {name:"GitHub Pages",url:"https://pages.github.com/"},
+ {name:"itch.io Minecraft Games",url:"https://itch.io/games/tag-minecraft"}
+];
+
+function render() {
+ const box=document.getElementById("sites");
+ box.innerHTML="";
+ sites.forEach((s,i)=>{
+  const div=document.createElement("div");
+  div.className="card";
+  const title=document.createElement("h3");
+  title.textContent=s.name;
+  const url=document.createElement("p");
+  url.textContent=s.url;
+  const status=document.createElement("p");
+  status.className="status";
+  status.textContent=s.status || "Not tested yet";
+  const open=document.createElement("button");
+  open.className="open";
+  open.textContent="OPEN WEBSITE";
+  open.onclick=()=>window.open(s.url,"_blank","noopener");
+  const yes=document.createElement("button");
+  yes.className="yes";
+  yes.textContent="WORKS";
+  yes.onclick=()=>{s.status="✅ Accessible";render();};
+  const no=document.createElement("button");
+  no.className="no";
+  no.textContent="BLOCKED / FAILED";
+  no.onclick=()=>{s.status="❌ Blocked or failed";render();};
+  div.append(title,url,status,open,yes,no);
+  box.append(div);
+ });
+}
+
+function addSite() {
+ const name=document.getElementById("siteName").value.trim();
+ let url=document.getElementById("siteURL").value.trim();
+ if(!name || !url) {
+  alert("Enter both a name and a website address!");
+  return;
+ }
+ if(!/^https?:\/\//i.test(url)) url="https://"+url;
+ try {
+  new URL(url);
+ } catch(e) {
+  alert("Please enter a valid website address.");
+  return;
+ }
+ sites.push({name,url});
+ document.getElementById("siteName").value="";
+ document.getElementById("siteURL").value="";
+ render();
+}
+
+render();
+</script>
+</body>
+</html>
